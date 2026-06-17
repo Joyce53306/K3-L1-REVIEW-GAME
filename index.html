@@ -1,12 +1,51 @@
-<div id="word-bank">
-    <!-- 原本的 -->
-    <div class="word-item" draggable="true" ondragstart="drag(event)" id="Doctor">Doctor</div>
-    <div class="word-item" draggable="true" ondragstart="drag(event)" id="Nurse">Nurse</div>
-    <div class="word-item" draggable="true" ondragstart="drag(event)" id="Pilot">Pilot</div>
-    
-    <!-- 您可以繼續新增其他職業 -->
-    <div class="word-item" draggable="true" ondragstart="drag(event)" id="Firefighter">Firefighter</div>
-    <div class="word-item" draggable="true" ondragstart="drag(event)" id="Chef">Chef</div>
-    <div class="word-item" draggable="true" ondragstart="drag(event)" id="Ballerina">Ballerina</div>
-    <div class="word-item" draggable="true" ondragstart="drag(event)" id="Artist">Artist</div>
-</div>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>Career Dreamer - K3 L1</title>
+    <style>
+        body { font-family: 'Comic Sans MS', sans-serif; text-align: center; background: #e0f7fa; }
+        .game-board { margin: 50px auto; width: 80%; background: white; padding: 40px; border-radius: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        #career-img { height: 300px; margin-bottom: 20px; }
+        .drop-zone { border: 4px dashed #ff9800; width: 250px; height: 60px; display: inline-block; vertical-align: middle; line-height: 60px; font-size: 28px; border-radius: 10px; background-color: #fff9c4; }
+        .word-item { padding: 15px 30px; margin: 10px; background: #4caf50; color: white; border-radius: 15px; cursor: grab; display: inline-block; font-size: 24px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>K3 L1: Career Dreamer</h1>
+    <div class="game-board">
+        <!-- 注意：路徑請確認為 images/ 加上您的檔名 -->
+        <img id="career-img" src="images/2_2.png" alt="Career">
+        <div style="font-size: 32px; margin-top: 20px;">
+            I want to be <span id="article">a</span> <span class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)">...drag here...</span>.
+        </div>
+        <div id="word-bank" style="margin-top: 30px;">
+            <div class="word-item" draggable="true" ondragstart="drag(event)" id="Nurse">Nurse</div>
+            <div class="word-item" draggable="true" ondragstart="drag(event)" id="Pilot">Pilot</div>
+            <div class="word-item" draggable="true" ondragstart="drag(event)" id="Doctor">Doctor</div>
+        </div>
+    </div>
+
+    <script>
+        function allowDrop(ev) { ev.preventDefault(); }
+        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+        
+        function drop(ev) {
+            ev.preventDefault();
+            var job = ev.dataTransfer.getData("text");
+            ev.target.innerText = job;
+            
+            // 自動判斷 a 或 an
+            let article = (['A','E','I','O','U'].includes(job[0].toUpperCase())) ? "an" : "a";
+            document.getElementById('article').innerText = article;
+            
+            let fullSentence = "I want to be " + article + " " + job;
+            let msg = new SpeechSynthesisUtterance(fullSentence);
+            msg.lang = 'en-US';
+            msg.rate = 0.8;
+            window.speechSynthesis.speak(msg);
+        }
+    </script>
+</body>
+</html>
