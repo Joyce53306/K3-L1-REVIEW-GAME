@@ -33,7 +33,7 @@
         </div>
     </div>
 
-    <script>
+   <script>
         const jobList = [
             {name: "teacher", img: "teacher.png"},
             {name: "pilot", img: "pilot.png"},
@@ -47,29 +47,42 @@
         ];
         let currentIdx = 0;
 
+        // 頁面載入時先唸一遍題目與答案
+        function playAudioTask() {
+            let job = jobList[currentIdx].name;
+            let article = (['a','e','i','o','u'].includes(job[0])) ? "an" : "a";
+            
+            let qMsg = new SpeechSynthesisUtterance("What do you want to be?");
+            let aMsg = new SpeechSynthesisUtterance("I want to be " + article + " " + job);
+            
+            window.speechSynthesis.speak(qMsg);
+            // 稍作停頓後唸答案
+            setTimeout(() => { window.speechSynthesis.speak(aMsg); }, 1500);
+        }
+
+        // 初始化時自動播放
+        window.onload = playAudioTask;
+
         function allowDrop(ev) { ev.preventDefault(); }
         function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
         
         function drop(ev) {
             ev.preventDefault();
             var job = ev.dataTransfer.getData("text");
+            
             if(job === jobList[currentIdx].name) {
                 ev.target.innerText = job;
-                let qMsg = new SpeechSynthesisUtterance("What do you want to be?");
-                window.speechSynthesis.speak(qMsg);
+                let successMsg = new SpeechSynthesisUtterance("Yes, you are a " + job);
+                window.speechSynthesis.speak(successMsg);
                 
-                setTimeout(() => {
-                    let article = (['a','e','i','o','u'].includes(job[0])) ? "an" : "a";
-                    let aMsg = new SpeechSynthesisUtterance("I want to be " + article + " " + job);
-                    window.speechSynthesis.speak(aMsg);
-                }, 1500);
-                
+                // 兩秒後換下一題並自動唸下一題的任務
                 setTimeout(() => {
                     currentIdx = (currentIdx + 1) % jobList.length;
                     document.getElementById('career-img').src = jobList[currentIdx].img;
                     document.getElementById('article').innerText = (['a','e','i','o','u'].includes(jobList[currentIdx].name[0])) ? "an" : "a";
                     ev.target.innerText = "...";
-                }, 3500);
+                    playAudioTask(); 
+                }, 2000);
             }
         }
     </script>
