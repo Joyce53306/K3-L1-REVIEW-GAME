@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <title>Career Dreamer - K3 L1</title>
+    <title>K3 L1: Career Dreamer</title>
     <style>
         body { font-family: 'Comic Sans MS', sans-serif; text-align: center; background: #e0f7fa; }
         .game-board { margin: 50px auto; width: 80%; background: white; padding: 40px; border-radius: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
@@ -13,38 +13,59 @@
 </head>
 <body>
 
-    <h1>K3 L1: Career Dreamer</h1>
+    <h1>Career Dreamer - K3 L1</h1>
     <div class="game-board">
-        <!-- 注意：路徑請確認為 images/ 加上您的檔名 -->
-        <img id="career-img" src="images/2_2.png" alt="Career">
+        <img id="career-img" src="images/teacher.png" alt="Career">
         <div style="font-size: 32px; margin-top: 20px;">
             I want to be <span id="article">a</span> <span class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)">...drag here...</span>.
         </div>
         <div id="word-bank" style="margin-top: 30px;">
-            <div class="word-item" draggable="true" ondragstart="drag(event)" id="Nurse">Nurse</div>
+            <div class="word-item" draggable="true" ondragstart="drag(event)" id="Teacher">Teacher</div>
             <div class="word-item" draggable="true" ondragstart="drag(event)" id="Pilot">Pilot</div>
+            <div class="word-item" draggable="true" ondragstart="drag(event)" id="Engineer">Engineer</div>
+            <div class="word-item" draggable="true" ondragstart="drag(event)" id="Chef">Chef</div>
+            <div class="word-item" draggable="true" ondragstart="drag(event)" id="Ballerina">Ballerina</div>
             <div class="word-item" draggable="true" ondragstart="drag(event)" id="Doctor">Doctor</div>
+            <div class="word-item" draggable="true" ondragstart="drag(event)" id="Firefighter">Firefighter</div>
+            <div class="word-item" draggable="true" ondragstart="drag(event)" id="Astronaut">Astronaut</div>
+            <div class="word-item" draggable="true" ondragstart="drag(event)" id="Nurse">Nurse</div>
         </div>
     </div>
 
     <script>
+        // 設定圖片陣列順序，請將右邊改成您真實的檔名
+        const jobList = [
+            {name: "Teacher", img: "images/teacher.png"},
+            {name: "Pilot", img: "images/pilot.png"},
+            {name: "Engineer", img: "images/engineer.png"},
+            {name: "Chef", img: "images/chef.png"},
+            {name: "Ballerina", img: "images/ballerina.png"},
+            {name: "Doctor", img: "images/doctor.png"},
+            {name: "Firefighter", img: "images/firefighter.png"},
+            {name: "Astronaut", img: "images/astronaut.png"},
+            {name: "Nurse", img: "images/nurse.png"}
+        ];
+        let currentIdx = 0;
+
         function allowDrop(ev) { ev.preventDefault(); }
         function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
         
         function drop(ev) {
             ev.preventDefault();
             var job = ev.dataTransfer.getData("text");
-            ev.target.innerText = job;
-            
-            // 自動判斷 a 或 an
-            let article = (['A','E','I','O','U'].includes(job[0].toUpperCase())) ? "an" : "a";
-            document.getElementById('article').innerText = article;
-            
-            let fullSentence = "I want to be " + article + " " + job;
-            let msg = new SpeechSynthesisUtterance(fullSentence);
-            msg.lang = 'en-US';
-            msg.rate = 0.8;
-            window.speechSynthesis.speak(msg);
+            if(job === jobList[currentIdx].name) {
+                ev.target.innerText = job;
+                let article = (['A','E','I','O','U'].includes(job[0].toUpperCase())) ? "an" : "a";
+                let msg = new SpeechSynthesisUtterance("I want to be " + article + " " + job);
+                window.speechSynthesis.speak(msg);
+                
+                // 兩秒後換下一題
+                setTimeout(() => {
+                    currentIdx = (currentIdx + 1) % jobList.length;
+                    document.getElementById('career-img').src = jobList[currentIdx].img;
+                    ev.target.innerText = "...drag here...";
+                }, 2000);
+            }
         }
     </script>
 </body>
